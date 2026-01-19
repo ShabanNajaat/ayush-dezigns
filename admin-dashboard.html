@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayush Dezigns | Admin Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="admin-dashboard">
+    <header>
+        <nav class="navbar">
+            <a href="admin-dashboard.html" class="logo">Ayush <span>Dezigns</span> <small>Admin</small></a>
+            <div class="auth-buttons">
+                <button class="logout-btn" onclick="logout()">Logout</button>
+                <a href="home.html" class="site-btn">View Site</a>
+            </div>
+        </nav>
+    </header>
+    <script src="script.js"></script>
+    <section class="section">
+        <h2 class="section-title">Order Management Dashboard</h2>
+
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <h3>Total Orders</h3>
+                <p id="totalOrders">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Pending</h3>
+                <p id="pendingOrders">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Completed</h3>
+                <p id="completedOrders">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Est. Revenue</h3>
+                <p id="totalRevenue">₵0</p>
+            </div>
+        </div>
+
+        <div class="actions-bar" style="margin: 20px 0; display: flex; gap: 10px; justify-content: flex-end;">
+            <button onclick="exportOrdersToCSV()" class="site-btn" style="background-color: #28a745;">
+                <i class="fas fa-file-excel"></i> Export to Excel
+            </button>
+            <!-- Hidden file input for import 
+            <input type="file" id="importFile" style="display: none;" accept=".csv" onchange="importOrders(this)">
+            <button onclick="document.getElementById('importFile').click()" class="site-btn" style="background-color: #17a2b8;">
+                <i class="fas fa-file-upload"></i> Import Orders
+            </button> 
+            -->
+        </div>
+
+        <div class="orders-table-container">
+            <h3>All Customer Orders</h3>
+            <div class="orders-table" id="ordersTable">
+                <!-- Orders will be populated here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Dashboard logic is automatically initialized by script.js
+        });
+    </script>
+
+</body>
+
+</html>

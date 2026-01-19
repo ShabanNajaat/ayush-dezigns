@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayush Dezigns | Custom Order</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="home.html" class="logo">Ayush <span>Dezigns</span></a>
+            <ul class="nav-links">
+                <li><a href="home.html">Home</a></li>
+                <li><a href="designs.html">Designs</a></li>
+                <li><a href="custom-order.html" class="active">Custom Order</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            </ul>
+        </nav>
+    </header>
+
+
+    <section class="section">
+        <h2 class="section-title">Create Your Custom Dress</h2>
+        <p class="section-subtitle">Fill out the form below to start your custom order process</p>
+
+        <div class="custom-order-form">
+            <form id="orderForm">
+                <div class="form-section">
+                    <h3>Personal Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fullName">Full Name *</label>
+                            <input type="text" id="fullName" name="fullName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number *</label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="occasion">Occasion *</label>
+                            <select id="occasion" name="occasion" required>
+                                <option value="">Select Occasion</option>
+                                <option value="wedding">Wedding</option>
+                                <option value="engagement">Engagement</option>
+                                <option value="birthday">Birthday</option>
+                                <option value="corporate">Corporate Event</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Design Specifications</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dressType">Dress Type *</label>
+                            <select id="dressType" name="dressType" required>
+                                <option value="">Select Dress Type</option>
+                                <option value="evening-gown">Evening Gown</option>
+                                <option value="cocktail">Cocktail Dress</option>
+                                <option value="bridal">Bridal Gown</option>
+                                <option value="traditional">Traditional Wear</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fabric">Preferred Fabric *</label>
+                            <select id="fabric" name="fabric" required>
+                                <option value="">Select Fabric</option>
+                                <option value="silk">Silk</option>
+                                <option value="lace">Lace</option>
+                                <option value="satin">Satin</option>
+                                <option value="chiffon">Chiffon</option>
+                                <option value="velvet">Velvet</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="colors">Color Preferences *</label>
+                        <input type="text" id="colors" name="colors" placeholder="e.g., Navy blue with gold accents"
+                            required>
+                    </div>
+
+                    <!-- NEW: Image Upload Section -->
+                    <div class="form-group">
+                        <label for="designImages">Upload Reference Images (Optional)</label>
+                        <div class="file-upload-container">
+                            <input type="file" id="designImages" name="designImages" accept="image/*" multiple
+                                onchange="previewImages(this)">
+                            <div class="file-upload-area" id="fileUploadArea">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Click to upload or drag and drop</p>
+                                <span>PNG, JPG, JPEG up to 5MB each</span>
+                            </div>
+                            <div class="image-preview" id="imagePreview"></div>
+                        </div>
+                        <p class="file-upload-help">You can upload up to 5 images to show us your design inspiration</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="designDetails">Design Details & Requirements *</label>
+                        <textarea id="designDetails" name="designDetails"
+                            placeholder="Please describe your vision for the dress, including style, length, neckline, sleeves, and any specific details you'd like..."
+                            required></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Measurements & Timeline</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="budget">Budget Range *</label>
+                            <select id="budget" name="budget" required>
+                                <option value="">Select Budget</option>
+                                <option value="5000-8000">GH₵ 5,000 - GH₵ 8,000</option>
+                                <option value="8000-12000">GH₵ 8,000 - GH₵ 12,000</option>
+                                <option value="12000-20000">GH₵ 12,000 - GH₵ 20,000</option>
+                                <option value="20000+">GH₵ 20,000+</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="timeline">Required Date *</label>
+                            <input type="date" id="timeline" name="timeline" required>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">Submit Custom Order</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>Ayush Dezigns</h3>
+                <p>Premium Custom Fashion Boutique</p>
+                <div class="contact-info">
+                    <p><i class="fas fa-map-marker-alt"></i> Sakumono, Accra, Ghana</p>
+                    <p><i class="fas fa-phone"></i> 055 816 4043</p>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <a href="home.html">Home</a>
+                <a href="designs.html">Designs</a>
+                <a href="custom-order.html">Custom Order</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2024 Ayush Dezigns. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js?v=2"></script>
+
+
+    <script>
+        // Image upload functionality
+        function previewImages(input) {
+            const preview = document.getElementById('imagePreview');
+            const uploadArea = document.getElementById('fileUploadArea');
+
+            preview.innerHTML = '';
+            uploadArea.style.display = 'none';
+
+            if (input.files && input.files.length > 0) {
+                const files = Array.from(input.files).slice(0, 5); // Limit to 5 files
+
+                files.forEach((file, index) => {
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+
+                        reader.onload = function (e) {
+                            const previewItem = document.createElement('div');
+                            previewItem.className = 'preview-item';
+                            previewItem.innerHTML = `
+                                <img src="${e.target.result}" alt="Preview ${index + 1}">
+                                <button type="button" onclick="removeImage(${index})" class="remove-image">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                <span class="image-name">${file.name}</span>
+                            `;
+                            preview.appendChild(previewItem);
+                        };
+
+                        reader.readAsDataURL(file);
+                    }
+                });
+            } else {
+                uploadArea.style.display = 'flex';
+            }
+        }
+
+        function removeImage(index) {
+            const input = document.getElementById('designImages');
+            const dt = new DataTransfer();
+            const files = Array.from(input.files);
+
+            // Remove the file at the specified index
+            files.splice(index, 1);
+
+            // Add remaining files back to input
+            files.forEach(file => dt.items.add(file));
+            input.files = dt.files;
+
+            // Update preview
+            previewImages(input);
+
+            // Show upload area if no files left
+            if (files.length === 0) {
+                document.getElementById('fileUploadArea').style.display = 'flex';
+            }
+        }
+
+        // Drag and drop functionality
+        const uploadArea = document.getElementById('fileUploadArea');
+        const fileInput = document.getElementById('designImages');
+
+        if (uploadArea) {
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight() {
+                uploadArea.classList.add('highlight');
+            }
+
+            function unhighlight() {
+                uploadArea.classList.remove('highlight');
+            }
+
+            uploadArea.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                fileInput.files = files;
+                previewImages(fileInput);
+            }
+
+            uploadArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+        }
+
+
+        // Check for design parameter in URL
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const designName = urlParams.get('design');
+
+            if (designName) {
+                const detailsField = document.getElementById('designDetails');
+                const colorsField = document.getElementById('colors');
+
+                // Pre-fill the details field
+                detailsField.value = `I am interested in customizing the "${designName}" from your collection. \n\nMy specific requirements are: \n`;
+
+                // Highlight the field to show user where to continue
+                detailsField.focus();
+
+                // Update page title/header to reflect customization
+                const pageTitle = document.querySelector('.section-title');
+                if (pageTitle) pageTitle.textContent = `Customize: ${designName}`;
+            }
+        });
+    </script>
+
+    </script>
+</body>
+
+</html>

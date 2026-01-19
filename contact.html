@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayush Dezigns | Contact</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="home.html" class="logo">Ayush <span>Dezigns</span></a>
+            <ul class="nav-links">
+                <li><a href="home.html">Home</a></li>
+                <li><a href="designs.html">Designs</a></li>
+                <li><a href="custom-order.html">Custom Order</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html" class="active">Contact</a></li>
+            </ul>
+            </ul>
+        </nav>
+    </header>
+
+
+    <main>
+        <section class="section contact-hero">
+            <h2 class="section-title">Get In Touch</h2>
+            <p class="section-subtitle">We'd love to hear from you. Reach out to start your custom fashion journey.</p>
+
+            <div class="contact-container">
+                <!-- Contact Info Column -->
+                <div class="contact-info-wrapper">
+                    <div class="contact-card">
+                        <div class="icon-box"><i class="fas fa-map-marker-alt"></i></div>
+                        <div class="card-content">
+                            <h3>Visit Us</h3>
+                            <p>Sakumono, Accra<br>Greater Accra Region, Ghana</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-card">
+                        <div class="icon-box"><i class="fas fa-phone"></i></div>
+                        <div class="card-content">
+                            <h3>Call Us</h3>
+                            <p>055 816 4043</p>
+                            <button class="text-link-btn" onclick="callNumber()">Call Now <i
+                                    class="fas fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="contact-card">
+                        <div class="icon-box"><i class="fas fa-envelope"></i></div>
+                        <div class="card-content">
+                            <h3>Email Us</h3>
+                            <p>najaatmohammedshaban@gmail.com
+                            </p>
+                            <button class="text-link-btn" onclick="location.href='mailto:info@ayushdezigns.com'">Send
+                                Email <i class="fas fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="contact-card">
+                        <div class="icon-box"><i class="fas fa-clock"></i></div>
+                        <div class="card-content">
+                            <h3>Working Hours</h3>
+                            <p>Mon - Sat: 9:00 AM - 6:00 PM<br>Sunday: 12:00 PM - 4:00 PM</p>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="quick-actions">
+                        <h3>Quick Connect</h3>
+                        <div class="action-buttons">
+                            <button class="action-btn call-action" onclick="callNumber()">
+                                <i class="fas fa-phone-alt"></i> Call Now
+                            </button>
+                            <button class="action-btn whatsapp-action" onclick="openWhatsApp()">
+                                <i class="fab fa-whatsapp"></i> Chat on WhatsApp
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Form Column -->
+                <div class="contact-form-wrapper">
+                    <div class="form-header">
+                        <h3>Send a Message</h3>
+                        <p>Directly to our WhatsApp</p>
+                    </div>
+                    <form id="contactForm" onsubmit="handleFormSubmit(event)">
+                        <div class="form-group">
+                            <label for="contactName">Full Name</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="contactName" name="contactName" placeholder="Your Name" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="contactEmail">Email Address</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-envelope"></i>
+                                    <input type="email" id="contactEmail" name="contactEmail"
+                                        placeholder="email@example.com" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactPhone">Phone Number</label>
+                                <div class="input-with-icon">
+                                    <i class="fas fa-phone"></i>
+                                    <input type="tel" id="contactPhone" name="contactPhone" placeholder="055..."
+                                        required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactSubject">Subject</label>
+                            <div class="input-with-icon">
+                                <i class="fas fa-heading"></i>
+                                <input type="text" id="contactSubject" name="contactSubject"
+                                    placeholder="Inquiry about..." required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactMessage">Message</label>
+                            <div class="input-with-icon textarea-icon">
+                                <i class="fas fa-comment-alt"></i>
+                                <textarea id="contactMessage" name="contactMessage" rows="5"
+                                    placeholder="How can we help you?" required></textarea>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="submit-btn full-width-btn">
+                            <i class="fab fa-whatsapp"></i> Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>Ayush Dezigns</h3>
+                <p>Premium Custom Fashion Boutique</p>
+                <div class="contact-info-footer">
+                    <p><i class="fas fa-map-marker-alt"></i> Sakumono, Accra, Ghana</p>
+                    <p><i class="fas fa-phone"></i> 055 816 4043</p>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <a href="home.html">Home</a>
+                <a href="designs.html">Designs</a>
+                <a href="custom-order.html">Custom Order</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2024 Ayush Dezigns. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Included Scripts -->
+    <script src="script.js"></script>
+    <script>
+        // Page Specific Scripts
+
+        function openWhatsApp(message = 'Hello! I want to inquire about Ayush Dezigns.') {
+            const phoneNumber = '233558164043'; // International format without +
+            const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
+
+        function callNumber() {
+            window.location.href = 'tel:+233558164043';
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            // Get form values
+            const name = document.getElementById('contactName').value;
+            const email = document.getElementById('contactEmail').value;
+            const phone = document.getElementById('contactPhone').value;
+            const subject = document.getElementById('contactSubject').value;
+            const message = document.getElementById('contactMessage').value;
+
+            // Create formatted message
+            const whatsappMessage =
+                `*NEW INQUIRY FROM WEBSITE*
+
+*Name:* ${name}
+*Email:* ${email}
+*Phone:* ${phone}
+*Subject:* ${subject}
+
+*Message:*
+${message}
+-------------------------`;
+
+            openWhatsApp(whatsappMessage);
+        }
+
+        // Initialize any page-specific animations
+        document.addEventListener('DOMContentLoaded', () => {
+            // If we want falling flowers here too, we can call the global function if available
+            if (typeof createFallingFlowers === 'function') {
+                createFallingFlowers(5);
+            }
+        });
+    </script>
+</body>
+
+</html>

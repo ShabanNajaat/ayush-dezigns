@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayush Dezigns | Verification</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="verification-page">
+    <div class="verification-container">
+        <div class="brand-header">
+            <h1>Ayush <span>Dezigns</span></h1>
+            <p>Premium Custom Fashion</p>
+        </div>
+        <script src="script.js"></script>
+
+        <div class="verification-box">
+            <h2>Human Verification Required</h2>
+            <p>Please complete this verification to access our exclusive collection</p>
+
+            <div class="human-test-container">
+                <p>Security Check: Drag the puzzle piece into the box to verify</p>
+
+                <div class="puzzle-wrapper">
+                    <!-- The "Board" with a hole -->
+                    <div class="puzzle-board" id="target-zone">
+                        <div class="puzzle-hole"></div>
+                        <div class="puzzle-message">Drop Here</div>
+                    </div>
+
+                    <!-- The Draggable Piece -->
+                    <div class="piece-container">
+                        <div class="jigsaw-piece" id="draggable-piece" draggable="true">
+                            <div class="piece-knob"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <p id="verification-status" class="status-msg">Fit the piece to continue</p>
+            </div>
+
+            <button class="verify-btn disabled" id="verify-btn" disabled>Verify Access</button>
+        </div>
+
+        <div class="location-info">
+            <p><i class="fas fa-map-marker-alt"></i> Sakumono, Accra, Ghana</p>
+            <p><i class="fas fa-phone"></i> 055 816 4043</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const piece = document.getElementById('draggable-piece');
+            const target = document.getElementById('target-zone');
+            const verifyBtn = document.getElementById('verify-btn');
+            const statusMsg = document.getElementById('verification-status');
+
+            let isVerified = false;
+
+            piece.addEventListener('dragstart', function (e) {
+                e.dataTransfer.setData('text/plain', 'puzzle');
+                setTimeout(() => {
+                    piece.style.opacity = '0.5';
+                }, 0);
+            });
+
+            piece.addEventListener('dragend', function () {
+                piece.style.opacity = '1';
+            });
+
+            target.addEventListener('dragover', function (e) {
+                e.preventDefault(); // Necessary for drop to work
+                target.classList.add('highlight');
+            });
+
+            target.addEventListener('dragleave', function () {
+                target.classList.remove('highlight');
+            });
+
+            target.addEventListener('drop', function (e) {
+                e.preventDefault();
+                target.classList.remove('highlight');
+                const data = e.dataTransfer.getData('text/plain');
+
+                if (data === 'puzzle') {
+                    // Success!
+                    target.innerHTML = '<div class="jigsaw-piece docked"></div>';
+                    piece.style.display = 'none'; // Hide original
+
+                    target.classList.add('verified');
+                    statusMsg.textContent = 'Verification Complete!';
+                    statusMsg.style.color = 'green';
+
+                    verifyBtn.textContent = 'Enter Boutique';
+                    verifyBtn.classList.remove('disabled');
+                    verifyBtn.disabled = false;
+                    verifyBtn.classList.add('active-btn');
+
+                    isVerified = true;
+                }
+            });
+
+            verifyBtn.addEventListener('click', function () {
+                if (isVerified) {
+                    window.location.href = 'home.html';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
