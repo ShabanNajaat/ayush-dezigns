@@ -1205,12 +1205,41 @@ footer {
     gap: 10px;
 }
 
+/* Footer Social Media */
+.footer-social {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+}
+
+.social-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 1.2rem;
+}
+
+.social-icon:hover {
+    background: var(--primary-color);
+    color: var(--white);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+}
+
 .copyright {
     text-align: center;
-    margin-top: 50px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    color: #999;
+    padding-top: 30px;
+    border-top: 1px solid rgba(212, 175, 55, 0.1);
+    color: #888;
+    font-size: 0.9rem;
 }
 
 /* Responsive Design */
