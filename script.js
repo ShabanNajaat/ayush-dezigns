@@ -788,7 +788,7 @@ function showNotification(message, type = 'info') {
 
     // Create notification element
     const notification = document.createElement('div');
-    notification.className = 'custom-notification notification-${type}';
+    notification.className = `custom-notification notification-${type}`;
     notification.innerHTML = `
         <div class="notification-content">
             <span class="notification-message">${message}</span>
