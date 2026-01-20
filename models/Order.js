@@ -9,6 +9,7 @@ const orderSchema = new mongoose.Schema({
     fabric: { type: String },
     colors: { type: String },
     designDetails: { type: String },
+    designImages: [{ type: String }], // Array of Base64 strings
     budget: { type: String },
     timeline: { type: String },
     id: { type: String, unique: true, required: true },

@@ -227,6 +227,16 @@ function isValidPhone(phone) {
     return phoneRegex.test(phone.replace(/\s/g, ''));
 }
 
+// Convert file to Base64
+function convertToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+
 // Safe HTML escape for user input
 function escapeHtml(unsafe) {
     if (!unsafe) return '';
@@ -464,8 +474,21 @@ function initializeOrderForm() {
             colors: formData.get('colors') || '',
             designDetails: formData.get('designDetails') || '',
             budget: formData.get('budget') || '',
-            timeline: formData.get('timeline') || ''
+            timeline: formData.get('timeline') || '',
+            designImages: [] // To be populated
         };
+
+        // Handle image conversion to Base64
+        const designImagesInput = document.getElementById('designImages');
+        if (designImagesInput && designImagesInput.files.length > 0) {
+            try {
+                const files = Array.from(designImagesInput.files).slice(0, 5); // Limit to 5
+                const base64Images = await Promise.all(files.map(file => convertToBase64(file)));
+                orderData.designImages = base64Images;
+            } catch (imageError) {
+                console.error('Error processing images:', imageError);
+            }
+        }
 
         // Save order
         try {
@@ -587,11 +610,11 @@ async function loadOrders() {
         const revenue = orders.filter(o => o.status === 'completed').reduce((total, order) => {
             const budget = order.budget || '';
             // Using the mid-point or reasonable estimate for each range
-            if (budget.includes('5000-8000')) return total + 6500;
-            if (budget.includes('8000-12000')) return total + 10000;
-            if (budget.includes('12000-20000')) return total + 16000;
-            if (budget.includes('20000+')) return total + 25000;
-            return total + 0; // Don't count if budget is unknown or doesn't match
+            if (budget.includes('100-300')) return total + 200;
+            if (budget.includes('300-600')) return total + 450;
+            if (budget.includes('600-1000')) return total + 800;
+            if (budget.includes('1000+')) return total + 1200;
+            return total + 0;
         }, 0);
         totalRevenueEle.textContent = formatCurrency(revenue);
     }
@@ -614,6 +637,7 @@ async function loadOrders() {
                     <th>Dress Type</th>
                     <th>Budget</th>
                     <th>Timeline</th>
+                    <th>Images</th>
                     <th>Status</th>
                     <th style="min-width: 250px; text-align: center;">Actions</th>
                 </tr>
@@ -634,18 +658,28 @@ async function loadOrders() {
                 <td>${escapeHtml(order.dressType)}</td>
                 <td>${escapeHtml(order.budget)}</td>
                 <td>${formatDate(order.timeline)}</td>
+                <td>
+                    ${order.designImages && order.designImages.length > 0
+                ? `<div class="image-preview-mini" onclick="viewOrderImages('${order.id}')">
+                           <i class="fas fa-image"></i> (${order.designImages.length})
+                       </div>`
+                : '<span class="no-images">None</span>'
+            }
+                </td>
                 <td><span class="${statusClass}">${statusText}</span></td>
                 <td>
-                    <button class="view-btn" onclick="viewOrderDetails('${order.id}')">View</button>
-                    ${order.status === 'completed' ?
+                    <div class="action-buttons">
+                        <button class="view-btn" onclick="viewOrderDetails('${order.id}')">View</button>
+                        ${order.status === 'completed' ?
                 `<button class="whatsapp-btn" onclick="openWhatsApp('${order.id}')"><i class="fab fa-whatsapp"></i> Notify</button>` :
                 `<button class="contact-btn" onclick="contactCustomer('${escapeHtml(order.phone)}', '${escapeHtml(order.email)}')">Contact</button>`
             }
-                    ${order.status === 'pending' ?
+                        ${order.status === 'pending' ?
                 `<button class="complete-btn" onclick="markOrderCompleted('${order.id}')">Complete</button>` :
                 ''
             }
-                    <button class="delete-btn" onclick="deleteOrderFromDashboard('${order.id}')">Delete</button>
+                        <button class="delete-btn" onclick="deleteOrderFromDashboard('${order.id}')">Delete</button>
+                    </div>
                 </td>
             </tr>
         `;
@@ -660,31 +694,143 @@ async function viewOrderDetails(orderId) {
     const order = orders.find(o => o.id === orderId);
 
     if (order) {
-        const orderDetails = `
-ORDER DETAILS
-════════════════════════════════════════
-Order ID: #${order.id}
-Customer: ${order.fullName}
-Phone: ${order.phone}
-Email: ${order.email}
-Occasion: ${order.occasion}
-Dress Type: ${order.dressType}
-Fabric: ${order.fabric}
-Colors: ${order.colors}
-Budget: ${order.budget}
-Timeline: ${formatDate(order.timeline)}
-Status: ${order.status}
-Date Submitted: ${formatDate(order.date)}
+        // Create a professional details modal
+        const overlay = document.createElement('div');
+        overlay.className = 'image-modal-overlay';
+        overlay.onclick = () => overlay.remove();
 
-DESIGN DETAILS:
-${order.designDetails}
-════════════════════════════════════════
-        `;
-        alert(orderDetails);
+        const container = document.createElement('div');
+        container.className = 'image-modal-container';
+        container.style.maxWidth = '600px';
+        container.onclick = (e) => e.stopPropagation();
+
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'image-modal-close';
+        closeBtn.innerHTML = '&times;';
+        closeBtn.onclick = () => overlay.remove();
+        container.appendChild(closeBtn);
+
+        const title = document.createElement('h3');
+        title.innerHTML = `<i class="fas fa-file-invoice"></i> Order Details - #${order.id}`;
+        title.style.marginBottom = '20px';
+        title.style.color = 'var(--primary)';
+        title.style.borderBottom = '1px solid #eee';
+        title.style.paddingBottom = '10px';
+        container.appendChild(title);
+
+        const detailsGrid = document.createElement('div');
+        detailsGrid.style.display = 'grid';
+        detailsGrid.style.gridTemplateColumns = '1fr 1fr';
+        detailsGrid.style.gap = '15px';
+        detailsGrid.style.marginBottom = '20px';
+
+        const addDetail = (label, value) => {
+            const item = document.createElement('div');
+            item.innerHTML = `<strong style="color: #666; font-size: 0.8rem; text-transform: uppercase;">${label}</strong><br><span style="color: #333; font-weight: 500;">${value || 'N/A'}</span>`;
+            detailsGrid.appendChild(item);
+        };
+
+        addDetail('Customer', escapeHtml(order.fullName));
+        addDetail('Phone', escapeHtml(order.phone));
+        addDetail('Email', escapeHtml(order.email));
+        addDetail('Occasion', escapeHtml(order.occasion));
+        addDetail('Dress Type', escapeHtml(order.dressType));
+        addDetail('Fabric', escapeHtml(order.fabric));
+        addDetail('Colors', escapeHtml(order.colors));
+        addDetail('Budget', escapeHtml(order.budget));
+        addDetail('Timeline', formatDate(order.timeline));
+        addDetail('Status', order.status.toUpperCase());
+        addDetail('Date Submitted', formatDate(order.date));
+
+        container.appendChild(detailsGrid);
+
+        const requirementsSec = document.createElement('div');
+        requirementsSec.style.background = '#f9f9f9';
+        requirementsSec.style.padding = '15px';
+        requirementsSec.style.borderRadius = '8px';
+        requirementsSec.style.marginTop = '10px';
+        requirementsSec.innerHTML = `<strong style="color: #666; font-size: 0.8rem; text-transform: uppercase;">Design Requirements:</strong><br><p style="margin-top: 8px; line-height: 1.5; color: #444;">${escapeHtml(order.designDetails)}</p>`;
+        container.appendChild(requirementsSec);
+
+        if (order.designImages && order.designImages.length > 0) {
+            const imagesTitle = document.createElement('h4');
+            imagesTitle.textContent = 'Reference Images:';
+            imagesTitle.style.marginTop = '20px';
+            imagesTitle.style.marginBottom = '10px';
+            container.appendChild(imagesTitle);
+
+            const grid = document.createElement('div');
+            grid.className = 'image-modal-grid';
+            grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(120px, 1fr))';
+
+            order.designImages.forEach(imgData => {
+                const img = document.createElement('img');
+                img.src = imgData;
+                img.style.width = '100%';
+                img.style.borderRadius = '4px';
+                img.style.cursor = 'zoom-in';
+                img.onclick = () => window.open(imgData, '_blank');
+                grid.appendChild(img);
+            });
+            container.appendChild(grid);
+        }
+
+        overlay.appendChild(container);
+        document.body.appendChild(overlay);
     } else {
         showNotification('Order not found!', 'error');
     }
 }
+
+async function viewOrderImages(orderId) {
+    const orders = await getOrders();
+    const order = orders.find(o => o.id === orderId);
+
+    if (!order || !order.designImages || order.designImages.length === 0) {
+        showNotification('No images found for this order.', 'info');
+        return;
+    }
+
+    // Create a simple modal
+    const overlay = document.createElement('div');
+    overlay.className = 'image-modal-overlay';
+    overlay.onclick = () => overlay.remove();
+
+    const container = document.createElement('div');
+    container.className = 'image-modal-container';
+    container.onclick = (e) => e.stopPropagation();
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'image-modal-close';
+    closeBtn.innerHTML = '&times;';
+    closeBtn.onclick = () => overlay.remove();
+    container.appendChild(closeBtn);
+
+    const title = document.createElement('h3');
+    title.textContent = `Reference Images - #${order.id}`;
+    title.style.marginBottom = '15px';
+    title.style.color = 'var(--primary)';
+    container.appendChild(title);
+
+    const grid = document.createElement('div');
+    grid.className = 'image-modal-grid';
+
+    order.designImages.forEach(imgData => {
+        const img = document.createElement('img');
+        img.src = imgData;
+        img.style.width = '100%';
+        img.style.borderRadius = '8px';
+        img.style.cursor = 'zoom-in';
+        img.onclick = () => window.open(imgData, '_blank');
+        grid.appendChild(img);
+    });
+
+    container.appendChild(grid);
+    overlay.appendChild(container);
+    document.body.appendChild(overlay);
+}
+
+window.viewOrderImages = viewOrderImages;
 
 function contactCustomer(phone, email) {
     const message = "Contact options:\n\nPhone: " + phone + "\nEmail: " + email + "\n\nClick OK to copy email address to clipboard.";
