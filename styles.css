@@ -1712,6 +1712,26 @@ footer {
         margin-bottom: 10px;
     }
 
+    .whatsapp-btn {
+        background-color: #25d366;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        margin-right: 5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .whatsapp-btn:hover {
+        background-color: #128c7e;
+        transform: scale(1.05);
+    }
+
     /* Responsive */
     @media (max-width: 900px) {
         .about-hero-compact h1 {

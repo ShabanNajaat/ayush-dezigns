@@ -1024,5 +1024,32 @@ window.viewOrderDetails = viewOrderDetails;
 window.contactCustomer = contactCustomer;
 window.markOrderCompleted = markOrderCompleted;
 window.deleteOrderFromDashboard = deleteOrderFromDashboard;
+window.openWhatsApp = openWhatsApp;
+
+async function openWhatsApp(orderId) {
+    const orders = await getOrders();
+    const order = orders.find(o => o.id === orderId);
+
+    if (!order) {
+        showNotification('Order not found!', 'error');
+        return;
+    }
+
+    // Clean phone number (remove spaces, leading plus, etc.)
+    let phone = order.phone.replace(/\D/g, '');
+
+    // Auto-prefix with Ghana code if needed
+    if (phone.startsWith('0') && phone.length === 10) {
+        phone = '233' + phone.substring(1);
+    } else if (phone.length === 9 && !phone.startsWith('233')) {
+        phone = '233' + phone;
+    }
+
+    const message = `Hello ${order.fullName}! ✨ This is Ayush Dezigns. Your custom ${order.dressType} for your ${order.occasion} is ready for pickup! 👗 Order ID: #${order.id}. Looking forward to seeing you!`;
+    const encodedMessage = encodeURIComponent(message);
+
+    window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+}
+window.deleteOrderFromDashboard = deleteOrderFromDashboard;
 window.exportOrdersToCSV = exportOrdersToCSV;
 window.importOrders = importOrders;
