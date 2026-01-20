@@ -1046,10 +1046,12 @@ async function openWhatsApp(orderId) {
         phone = '233' + phone;
     }
 
-    const message = `Hello ${order.fullName}! ✨ This is Ayush Dezigns. Your custom ${order.dressType} for your ${order.occasion} is ready for pickup! 👗 Order ID: #${order.id}. Looking forward to seeing you!`;
+    const message = `Hello ${order.fullName}! 🌟\n\nThis is Ayush Dezigns. Your custom ${order.dressType} for your ${order.occasion} is ready for pickup! 👗✨\n\nOrder ID: #${order.id}\n\nWe are looking forward to seeing you!`;
     const encodedMessage = encodeURIComponent(message);
 
-    window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+    // Using the official WhatsApp Web/App format
+    const waUrl = `https://wa.me/${phone}?text=${encodedMessage}`;
+    window.open(waUrl, '_blank');
 }
 window.deleteOrderFromDashboard = deleteOrderFromDashboard;
 window.exportOrdersToCSV = exportOrdersToCSV;
