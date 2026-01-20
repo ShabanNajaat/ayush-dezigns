@@ -1,13 +1,18 @@
 const nodemailer = require('nodemailer');
 
 // Initialize Nodemailer transporter with Gmail SMTP
-// Note: App Password is required for Gmail SMTP
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true, // Use SSL
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
-    }
+    },
+    // Add timeouts to prevent long hangs on cloud providers
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000
 });
 
 /**
