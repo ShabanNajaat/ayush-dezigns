@@ -14,8 +14,15 @@ const transporter = nodemailer.createTransport({
  * Send order completion email to customer
  */
 async function sendOrderCompletionEmail(order) {
+    console.log(`[EmailService] Attempting to send completion email to: ${order.email} (Order #${order.id})`);
+
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-        console.log('Gmail SMTP credentials not configured - email not sent');
+        console.error('[EmailService] ❌ Gmail SMTP credentials (EMAIL_USER or EMAIL_PASS) are missing in environment variables.');
+        return false;
+    }
+
+    if (!order.email) {
+        console.error('[EmailService] ❌ No recipient email address found for this order.');
         return false;
     }
 

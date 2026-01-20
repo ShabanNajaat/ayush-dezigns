@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const mongoose = require('mongoose');
 require('dotenv').config();
+const { sendOrderCompletionEmail } = require('./utils/emailService');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -105,11 +106,11 @@ app.put('/api/orders/:id', async (req, res) => {
 
         // Send email notification if order is marked as completed
         if (updateData.status === 'completed') {
+            console.log(`[Server] Order #${orderId} marked as completed. Triggering email notification...`);
             try {
-                const { sendOrderCompletionEmail } = require('./utils/emailService');
                 await sendOrderCompletionEmail(updatedOrder);
             } catch (emailErr) {
-                console.error('Failed to send completion email:', emailErr);
+                console.error('[Server] ❌ Failed to execute sendOrderCompletionEmail:', emailErr.message);
             }
         }
 
