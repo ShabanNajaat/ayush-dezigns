@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
+const mongoose = require('mongoose');
 require('dotenv').config();
 
 const app = express();
@@ -12,7 +13,23 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname))); // Serve static files from current directory
 
-// Database (Local NeDB)
+// Database (MongoDB)
+const MONGODB_URI = process.env.MONGODB_URI;
+mongoose.connect(MONGODB_URI)
+    .then(() => {
+        console.log('--------------------------------------------');
+        console.log('✅ Successfully connected to MongoDB');
+        console.log(`📡 URI: ${MONGODB_URI}`);
+        console.log('--------------------------------------------');
+    })
+    .catch(err => {
+        console.error('--------------------------------------------');
+        console.error('❌ MongoDB connection error:');
+        console.error(err.message);
+        console.error('Please ensure MongoDB is running on your machine.');
+        console.error('--------------------------------------------');
+    });
+
 const Order = require('./models/Order');
 
 // API Routes
@@ -52,13 +69,13 @@ app.post('/api/orders', async (req, res) => {
     if (!orderData.id) {
         orderData.id = 'AY' + Date.now() + Math.floor(Math.random() * 1000);
     }
-    // Default fields
-    if (!orderData.status) orderData.status = 'pending';
-    if (!orderData.date) orderData.date = new Date();
-    if (!orderData.lastUpdated) orderData.lastUpdated = new Date();
+    // Default fields are handled by schema, but we can set them explicitly too
+    orderData.status = orderData.status || 'pending';
+    orderData.date = orderData.date || new Date();
+    orderData.lastUpdated = new Date();
 
     try {
-        const newOrder = await Order.insert(orderData);
+        const newOrder = await Order.create(orderData);
         res.status(201).json(newOrder);
     } catch (err) {
         res.status(400).json({ message: err.message });
@@ -75,29 +92,25 @@ app.put('/api/orders/:id', async (req, res) => {
         const updateData = { ...req.body };
         delete updateData._id;
 
-        // Check if order exists
-        const existingOrder = await Order.findOne({ id: orderId });
-        if (!existingOrder) return res.status(404).json({ message: 'Order not found' });
-
-        const updateSet = {};
-        if (updateData.status) updateSet.status = updateData.status;
-
-        // Add other fields from body if they are part of update
-        // (Just mimicking original logic where mainly status was updated, but safer to follow pattern)
-        // Original: if (req.body.status) order.status = req.body.status;
-
-        updateSet.lastUpdated = new Date();
+        updateData.lastUpdated = new Date();
 
         // Perform update
-        await Order.update({ id: orderId }, { $set: updateSet });
+        const updatedOrder = await Order.findOneAndUpdate(
+            { id: orderId },
+            { $set: updateData },
+            { new: true }
+        );
 
-        // Fetch updated document
-        const updatedOrder = await Order.findOne({ id: orderId });
+        if (!updatedOrder) return res.status(404).json({ message: 'Order not found' });
 
         // Send email notification if order is marked as completed
         if (updateData.status === 'completed') {
-            const { sendOrderCompletionEmail } = require('./utils/emailService');
-            await sendOrderCompletionEmail(updatedOrder);
+            try {
+                const { sendOrderCompletionEmail } = require('./utils/emailService');
+                await sendOrderCompletionEmail(updatedOrder);
+            } catch (emailErr) {
+                console.error('Failed to send completion email:', emailErr);
+            }
         }
 
         res.json(updatedOrder);
@@ -109,8 +122,8 @@ app.put('/api/orders/:id', async (req, res) => {
 // Delete an order
 app.delete('/api/orders/:id', async (req, res) => {
     try {
-        const numRemoved = await Order.remove({ id: req.params.id }, {});
-        if (numRemoved === 0) return res.status(404).json({ message: 'Order not found' });
+        const result = await Order.deleteOne({ id: req.params.id });
+        if (result.deletedCount === 0) return res.status(404).json({ message: 'Order not found' });
         res.json({ message: 'Order deleted' });
     } catch (err) {
         res.status(500).json({ message: err.message });
@@ -135,5 +148,5 @@ app.get('/', (req, res) => {
 // Start Server
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-    console.log(`Using local database: orders.db`);
+    console.log(`Connected to MongoDB Atlas`);
 });

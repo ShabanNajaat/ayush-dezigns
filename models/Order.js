@@ -1,9 +1,20 @@
-const Datastore = require('nedb-promises');
-const path = require('path');
+const mongoose = require('mongoose');
 
-// Initialize the database in a file named 'orders.db' in the parent directory or current directory
-// Let's put it in the root folder alongside server.js
-const dbPath = path.join(__dirname, '..', 'orders.db');
-const orders = Datastore.create(dbPath);
+const orderSchema = new mongoose.Schema({
+    fullName: { type: String, required: true },
+    phone: { type: String, required: true },
+    email: { type: String, required: true },
+    occasion: { type: String },
+    dressType: { type: String },
+    fabric: { type: String },
+    colors: { type: String },
+    designDetails: { type: String },
+    budget: { type: String },
+    timeline: { type: String },
+    id: { type: String, unique: true, required: true },
+    status: { type: String, default: 'pending' },
+    date: { type: Date, default: Date.now },
+    lastUpdated: { type: Date, default: Date.now }
+});
 
-module.exports = orders;
+module.exports = mongoose.model('Order', orderSchema);
