@@ -126,11 +126,10 @@ app.put('/api/orders/:id', async (req, res) => {
         // Send email notification if order is marked as completed
         if (updateData.status === 'completed') {
             console.log(`[Server] Order #${orderId} marked as completed. Triggering email notification...`);
-            try {
-                await sendOrderCompletionEmail(updatedOrder);
-            } catch (emailErr) {
+            // Fire and forget - don't make the user wait for SMTP timeouts
+            sendOrderCompletionEmail(updatedOrder).catch(emailErr => {
                 console.error('[Server] ❌ Failed to execute sendOrderCompletionEmail:', emailErr.message);
-            }
+            });
         }
 
         res.json(updatedOrder);
