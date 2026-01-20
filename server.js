@@ -16,20 +16,29 @@ app.use(express.static(path.join(__dirname))); // Serve static files from curren
 
 // Database (MongoDB)
 const MONGODB_URI = process.env.MONGODB_URI;
-mongoose.connect(MONGODB_URI)
-    .then(() => {
+
+const startServer = async () => {
+    try {
         console.log('--------------------------------------------');
+        console.log('📡 Attempting to connect to MongoDB...');
+        await mongoose.connect(MONGODB_URI);
         console.log('✅ Successfully connected to MongoDB');
-        console.log(`📡 URI: ${MONGODB_URI}`);
         console.log('--------------------------------------------');
-    })
-    .catch(err => {
+
+        // Start Server only after DB is connected
+        app.listen(PORT, () => {
+            console.log(`🚀 Server is running on port ${PORT}`);
+        });
+    } catch (err) {
         console.error('--------------------------------------------');
         console.error('❌ MongoDB connection error:');
         console.error(err.message);
-        console.error('Please ensure MongoDB is running on your machine.');
+        console.error('Please check your MONGODB_URI and IP Whitelist.');
         console.error('--------------------------------------------');
-    });
+        // On Render, we want the process to fail so we can see the error clearly
+        process.exit(1);
+    }
+};
 
 const Order = require('./models/Order');
 
@@ -146,8 +155,5 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Start Server
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-    console.log(`Connected to MongoDB Atlas`);
-});
+// Start the application
+startServer();
