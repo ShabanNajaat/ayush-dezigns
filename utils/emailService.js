@@ -1,22 +1,16 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
-// Initialize Nodemailer transporter with Gmail SMTP
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    }
-});
+// Initialize Resend with API Key
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 /**
  * Send order completion email to customer
  */
 async function sendOrderCompletionEmail(order) {
-    console.log(`[EmailService] Attempting to send completion email to: ${order.email} (Order #${order.id})`);
+    console.log(`[EmailService] Attempting to send Resend completion email to: ${order.email} (Order #${order.id})`);
 
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-        console.error('[EmailService] ❌ Gmail SMTP credentials (EMAIL_USER or EMAIL_PASS) are missing in environment variables.');
+    if (!process.env.RESEND_API_KEY) {
+        console.error('[EmailService] ❌ RESEND_API_KEY is missing in environment variables.');
         return false;
     }
 
@@ -107,18 +101,22 @@ async function sendOrderCompletionEmail(order) {
 </html>
         `;
 
-        const mailOptions = {
-            from: `"Ayush Dezigns" <${process.env.EMAIL_USER}>`,
-            to: order.email,
+        const { data, error } = await resend.emails.send({
+            from: 'Ayush Dezigns <onboarding@resend.dev>',
+            to: [order.email],
             subject: `Ready for Pickup! 👗 Your Order #${order.id} is Complete`,
             html: emailHtml
-        };
+        });
 
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent successfully:', info.messageId);
+        if (error) {
+            console.error('[EmailService] ❌ Resend API Error:', error);
+            return false;
+        }
+
+        console.log('[EmailService] ✅ Email sent successfully via Resend:', data.id);
         return true;
     } catch (error) {
-        console.error('Error sending email via Gmail SMTP:', error);
+        console.error('[EmailService] 💥 Unexpected Error sending email:', error);
         return false;
     }
 }
