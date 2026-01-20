@@ -1027,6 +1027,7 @@ window.deleteOrderFromDashboard = deleteOrderFromDashboard;
 window.openWhatsApp = openWhatsApp;
 
 async function openWhatsApp(orderId) {
+    console.log('[Dashboard] Opening WhatsApp for order:', orderId);
     const orders = await getOrders();
     const order = orders.find(o => o.id === orderId);
 
