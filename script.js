@@ -637,7 +637,10 @@ async function loadOrders() {
                 <td><span class="${statusClass}">${statusText}</span></td>
                 <td>
                     <button class="view-btn" onclick="viewOrderDetails('${order.id}')">View</button>
-                    <button class="contact-btn" onclick="contactCustomer('${escapeHtml(order.phone)}', '${escapeHtml(order.email)}')">Contact</button>
+                    ${order.status === 'completed' ?
+                `<button class="whatsapp-btn" onclick="openWhatsApp('${order.id}')"><i class="fab fa-whatsapp"></i> Notify</button>` :
+                `<button class="contact-btn" onclick="contactCustomer('${escapeHtml(order.phone)}', '${escapeHtml(order.email)}')">Contact</button>`
+            }
                     ${order.status === 'pending' ?
                 `<button class="complete-btn" onclick="markOrderCompleted('${order.id}')">Complete</button>` :
                 ''
