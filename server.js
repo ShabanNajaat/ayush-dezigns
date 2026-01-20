@@ -44,6 +44,16 @@ const Order = require('./models/Order');
 
 // API Routes
 
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+    const dbStatus = mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected';
+    res.json({
+        status: 'OK',
+        database: dbStatus,
+        timestamp: new Date()
+    });
+});
+
 // Get all orders
 app.get('/api/orders', async (req, res) => {
     try {

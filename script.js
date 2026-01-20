@@ -540,6 +540,21 @@ function initializeAdminDashboard() {
     }
 
     loadOrders();
+    checkDbStatus();
+}
+
+async function checkDbStatus() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/health`);
+        const data = await response.json();
+        const statusElement = document.getElementById('dbStatus');
+        if (statusElement) {
+            statusElement.className = data.database === 'Connected' ? 'status-tag status-success' : 'status-tag status-error';
+            statusElement.innerHTML = `<i class="fas fa-database"></i> ${data.database}`;
+        }
+    } catch (error) {
+        console.error('Error checking DB status:', error);
+    }
 }
 
 async function loadOrders() {
