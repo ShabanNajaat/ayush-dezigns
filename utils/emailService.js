@@ -2,11 +2,16 @@ const nodemailer = require('nodemailer');
 
 // Configure Gmail SMTP transporter
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true, // Use SSL
     auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS  // Uses the Google App Password from .env
-    }
+        pass: process.env.EMAIL_PASS
+    },
+    // Increased timeouts for stable connection on cloud hosts
+    connectionTimeout: 10000,
+    greetingTimeout: 10000
 });
 
 /**
@@ -115,7 +120,8 @@ async function sendOrderCompletionEmail(order) {
         };
 
         const info = await transporter.sendMail(mailOptions);
-        console.log('[EmailService] ✅ Email sent successfully via Gmail:', info.messageId);
+        console.log(`[EmailService] ✅ Email sent to ${order.email}. MessageID: ${info.messageId}`);
+        console.log('[EmailService] SMTP Response:', info.response);
         return true;
     } catch (error) {
         console.error('[EmailService] 💥 Error sending email via Gmail:', error);
