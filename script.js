@@ -256,9 +256,9 @@ function escapeHtml(unsafe) {
 // API & STORAGE MANAGEMENT
 // ================================
 
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? 'http://localhost:3000/api'
-    : '/api'; // Relative path for production
+const API_BASE_URL = (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:10000/api'
+    : '/api'; // Uses the same domain in production
 
 // Initialize - Check if API is reachable (optional step, skippable)
 async function initializeStorage() {
@@ -580,8 +580,11 @@ async function checkDbStatus() {
     }
 }
 
+let allOrders = []; // Global store to avoid async breaks for popups
+
 async function loadOrders() {
-    const orders = await getOrders();
+    allOrders = await getOrders();
+    const orders = allOrders;
     const ordersTable = document.getElementById('ordersTable');
     const totalOrders = document.getElementById('totalOrders');
     const pendingOrders = document.getElementById('pendingOrders');
@@ -841,17 +844,7 @@ function contactCustomer(phone, email) {
     }
 }
 
-async function markOrderCompleted(orderId) {
-    if (confirm('Mark this order as completed?')) {
-        const success = await updateOrderStatus(orderId, 'completed');
-        if (success) {
-            showNotification('Order marked as completed!', 'success');
-            loadOrders();
-        } else {
-            showNotification('Error updating order status', 'error');
-        }
-    }
-}
+
 
 async function deleteOrderFromDashboard(orderId) {
     if (confirm('Are you sure you want to delete this order? This action cannot be undone.')) {
@@ -1172,18 +1165,67 @@ window.markOrderCompleted = markOrderCompleted;
 window.deleteOrderFromDashboard = deleteOrderFromDashboard;
 window.openWhatsApp = openWhatsApp;
 
-async function openWhatsApp(orderId) {
-    console.log('[Dashboard] Opening WhatsApp for order:', orderId);
-    const orders = await getOrders();
-    const order = orders.find(o => o.id === orderId);
+async function markOrderCompleted(orderId) {
+    console.log('[Dashboard] markOrderCompleted called for ID:', orderId);
+    // Find order from global store to stay synchronous for window.open
+    const order = allOrders.find(o => o.id === orderId);
+
+    if (!order) {
+        console.warn('[Dashboard] Order not found in global store, fetching...');
+        // Fallback to fetch if not in global store
+        const orders = await getOrders();
+        const fallbackOrder = orders.find(o => o.id === orderId);
+        if (!fallbackOrder) {
+            console.error('[Dashboard] Order details still not found!');
+            showNotification('Order data not found!', 'error');
+            return;
+        }
+        return markOrderCompletedWithData(fallbackOrder);
+    }
+
+    markOrderCompletedWithData(order);
+}
+
+function markOrderCompletedWithData(order) {
+    if (confirm(`Mark order #${order.id} for ${order.fullName} as completed and notify customer via WhatsApp?`)) {
+        // 1. Trigger WhatsApp IMMEDIATELY (must be synchronous to avoid popup blocker)
+        openWhatsApp(order);
+
+        // 2. Update status in background
+        updateOrderStatus(order.id, 'completed').then(success => {
+            if (success) {
+                showNotification('Order marked as completed! Email notification triggered.', 'success');
+                loadOrders();
+            } else {
+                showNotification('Maintenance: WhatsApp opened but status update failed locally.', 'warning');
+            }
+        });
+    }
+}
+
+async function openWhatsApp(orderDataOrId) {
+    let order = null;
+
+    // Support both ID string and Order object
+    if (typeof orderDataOrId === 'string') {
+        const orders = await getOrders();
+        order = orders.find(o => o.id === orderDataOrId);
+    } else {
+        order = orderDataOrId;
+    }
 
     if (!order) {
         showNotification('Order not found!', 'error');
         return;
     }
 
+    if (!order.phone) {
+        showNotification('Customer phone number not found!', 'error');
+        return;
+    }
+
     // Clean phone number (remove spaces, leading plus, etc.)
-    let phone = order.phone.replace(/\D/g, '');
+    let phone = order.phone.toString().replace(/\D/g, '');
 
     // Auto-prefix with Ghana code if needed
     if (phone.startsWith('0') && phone.length === 10) {
@@ -1197,6 +1239,8 @@ async function openWhatsApp(orderId) {
 
     // Using the official WhatsApp Web/App format
     const waUrl = `https://wa.me/${phone}?text=${encodedMessage}`;
+
+    console.log('[Dashboard] Opening WhatsApp URL:', waUrl);
     window.open(waUrl, '_blank');
 }
 window.deleteOrderFromDashboard = deleteOrderFromDashboard;

@@ -1,16 +1,22 @@
-const { Resend } = require('resend');
+const nodemailer = require('nodemailer');
 
-// Initialize Resend with API Key
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Configure Gmail SMTP transporter
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS  // Uses the Google App Password from .env
+    }
+});
 
 /**
  * Send order completion email to customer
  */
 async function sendOrderCompletionEmail(order) {
-    console.log(`[EmailService] Attempting to send Resend completion email to: ${order.email} (Order #${order.id})`);
+    console.log(`[EmailService] Attempting to send Gmail completion email to: ${order.email} (Order #${order.id})`);
 
-    if (!process.env.RESEND_API_KEY) {
-        console.error('[EmailService] ❌ RESEND_API_KEY is missing in environment variables.');
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+        console.error('[EmailService] ❌ Gmail credentials (EMAIL_USER/EMAIL_PASS) are missing in environment variables.');
         return false;
     }
 
@@ -101,22 +107,18 @@ async function sendOrderCompletionEmail(order) {
 </html>
         `;
 
-        const { data, error } = await resend.emails.send({
-            from: 'Ayush Dezigns <onboarding@resend.dev>',
-            to: [order.email],
+        const mailOptions = {
+            from: `"Ayush Dezigns" <${process.env.EMAIL_USER}>`,
+            to: order.email,
             subject: `Ready for Pickup! 👗 Your Order #${order.id} is Complete`,
             html: emailHtml
-        });
+        };
 
-        if (error) {
-            console.error('[EmailService] ❌ Resend API Error:', error);
-            return false;
-        }
-
-        console.log('[EmailService] ✅ Email sent successfully via Resend:', data.id);
+        const info = await transporter.sendMail(mailOptions);
+        console.log('[EmailService] ✅ Email sent successfully via Gmail:', info.messageId);
         return true;
     } catch (error) {
-        console.error('[EmailService] 💥 Unexpected Error sending email:', error);
+        console.error('[EmailService] 💥 Error sending email via Gmail:', error);
         return false;
     }
 }
