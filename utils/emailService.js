@@ -15,7 +15,7 @@ async function sendOrderCompletionEmail(order) {
 
     try {
         const { data, error } = await resend.emails.send({
-            from: 'Ayush Dezigns <orders@ayushdezigns.com>', // MUST BE A VERIFIED DOMAIN ON RESEND
+            from: 'Ayush Dezigns <onboarding@resend.dev>', // EXPLICITLY FOR TESTING MODE
             to: [order.email],
             subject: `Ready for Pickup! 👗 Your Order #${order.id} is Complete`,
             html: `
